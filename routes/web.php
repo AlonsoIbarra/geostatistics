@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GeostatisticsController;
 use Illuminate\Support\Facades\Route;
 
 /*
