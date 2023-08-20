@@ -1,0 +1,53 @@
+version: "3"
+
+services:
+  geostatistics_database:
+    image: mysql:5.7
+    container_name: ${DB_CONTAINER_NAME}
+    hostname: ${DB_HOST_NAME}
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "127.0.0.1:33061:3306"
+    volumes:
+      - .:/home
+    networks:
+      - geostatistics_net
+
+  geostatistics_server:
+    build:
+      dockerfile: DockerFile
+      context: .
+    depends_on:
+      - geostatistics_database
+    container_name: ${APP_CONTAINER_NAME}
+    hostname: ${APP_HOST_NAME}
+    environment:
+      APP_NAME: ${APP_NAME}
+      APP_ENV: ${APP_ENV}
+      APP_KEY: ${APP_KEY}
+      APP_DEBUG: ${APP_DEBUG}
+      APP_URL: ${APP_URL}
+      DB_CONNECTION: ${DB_CONNECTION}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    command: >
+      sh -c "php artisan migrate && php artisan serve --host=0.0.0.0 --port=8000"
+    working_dir: /var/www/html
+    stdin_open: true
+    tty: true
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - .:/var/www/html
+    networks:
+      - geostatistics_net
+
+networks:
+  geostatistics_net:
