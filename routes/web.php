@@ -16,3 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get( '/geostatistics', [ GeostatisticsController::class, 'index' ] );
+Route::put( '/geostatistics', [ GeostatisticsController::class, 'update' ] );
